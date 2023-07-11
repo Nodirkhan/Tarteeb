@@ -4,7 +4,9 @@
 //=================================
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Tarteeb.Api.Models.Foundations.Scores;
 using Tarteeb.Api.Models.Foundations.Users.Exceptions;
 using Tarteeb.Api.Models.Processings.UserProfiles;
 using Tarteeb.Api.Models.Processings.UserProfiles.Exceptions;
@@ -15,6 +17,7 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
     public partial class UserProfileProcessingService
     {
         private delegate ValueTask<UserProfile> ReturningUserProfileFunction();
+        private delegate IQueryable<UserProfile> ReturningUserProfilesFunction();
 
         private async ValueTask<UserProfile> TryCatch(ReturningUserProfileFunction returningFunction)
         {
@@ -43,6 +46,21 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
                 throw CreateAndLogDependencyException(userServiceException);
             }
             catch(Exception serviceException)
+            {
+                var failedUserProfileProcessingServiceException =
+                    new FailedUserProfileProcessingServiceException(serviceException);
+
+                throw CreateAndLogServiceException(failedUserProfileProcessingServiceException);
+            }
+        }
+
+        private IQueryable<UserProfile> TryCatch(ReturningUserProfilesFunction returningFunction)
+        {
+            try
+            {
+                return returningFunction();
+            }
+            catch (Exception serviceException)
             {
                 var failedUserProfileProcessingServiceException =
                     new FailedUserProfileProcessingServiceException(serviceException);

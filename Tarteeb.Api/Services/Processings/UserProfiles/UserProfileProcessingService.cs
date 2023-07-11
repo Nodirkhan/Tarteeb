@@ -27,10 +27,17 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
             this.loggingBroker = loggingBroker;
         }
 
-        public IQueryable<UserProfile> RetrieveAllUserProfiles()
+        public IQueryable<UserProfile> RetrieveAllUserProfiles() =>
+        TryCatch(() =>
         {
-            throw new NotImplementedException();
-        }
+            IQueryable<User> users =
+                this.userService.RetrieveAllUsers();
+
+            IQueryable<UserProfile> populatedUserProfiles =
+                users.Select(user => PopulateUserProfile(user));
+
+            return populatedUserProfiles;
+        });
 
         public ValueTask<UserProfile> RetrieveUserProfileByIdAsync(Guid userProfileId) =>
         TryCatch(async () =>

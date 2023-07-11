@@ -26,7 +26,8 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
             IQueryable<UserProfile> expectedUserProfiles = randomUserProfiles.DeepClone();
 
             this.userServiceMock.Setup(service =>
-                service.RetrieveAllUsers());
+                service.RetrieveAllUsers())
+                .Returns(returnedUsers);
 
             // when
             IQueryable<UserProfile> actualUserProfiles =
