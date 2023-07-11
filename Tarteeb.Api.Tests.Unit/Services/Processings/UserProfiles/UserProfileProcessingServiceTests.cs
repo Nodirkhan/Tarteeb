@@ -5,6 +5,7 @@
 
 using Moq;
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using Tarteeb.Api.Brokers.Loggings;
 using Tarteeb.Api.Models.Foundations.Emails;
@@ -84,11 +85,18 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
 
+        private static int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
 
         private User CreateRandomUser() =>
             this.CreateUserFiller(GetRandomDateTimeOffset()).Create();
+
+        private IQueryable<User> CreateRandomUsers() =>
+            this.CreateUserFiller(GetRandomDateTimeOffset()).Create(count: GetRandomNumber())
+                .ToList().AsQueryable();
 
         private Filler<User> CreateUserFiller(DateTimeOffset dates)
         {

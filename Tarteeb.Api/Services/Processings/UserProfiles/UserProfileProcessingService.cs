@@ -4,6 +4,7 @@
 //=================================
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Tarteeb.Api.Brokers.Loggings;
 using Tarteeb.Api.Models.Foundations.Emails;
@@ -24,6 +25,11 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
         {
             this.userService = userService;
             this.loggingBroker = loggingBroker;
+        }
+
+        public IQueryable<UserProfile> RetrieveAllUserProfiles()
+        {
+            throw new NotImplementedException();
         }
 
         public ValueTask<UserProfile> RetrieveUserProfileByIdAsync(Guid userProfileId) =>
