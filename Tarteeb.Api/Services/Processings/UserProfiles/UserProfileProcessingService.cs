@@ -33,10 +33,7 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
             IQueryable<User> users =
                 this.userService.RetrieveAllUsers();
 
-            IQueryable<UserProfile> populatedUserProfiles =
-                users.Select(user => PopulateUserProfile(user));
-
-            return populatedUserProfiles;
+            return users.Select(AsUserProfile).AsQueryable();
         });
 
         public ValueTask<UserProfile> RetrieveUserProfileByIdAsync(Guid userProfileId) =>
@@ -45,12 +42,15 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
             ValidateUserProfileId(userProfileId);
             var maybeUser = await this.userService.RetrieveUserByIdAsync(userProfileId);
             ValidateStorageUser(userProfileId, maybeUser);
-            UserProfile populatedUserProfile = PopulateUserProfile(maybeUser);
+            UserProfile mappedUserProfile = MapToUserProfile(maybeUser);
 
-            return populatedUserProfile;
+            return mappedUserProfile;
         });
 
-        private UserProfile PopulateUserProfile(User user)
+        private static Func<User, UserProfile> AsUserProfile =>
+            user => MapToUserProfile(user);
+
+        private static UserProfile MapToUserProfile(User user)
         {
             return new UserProfile
             {

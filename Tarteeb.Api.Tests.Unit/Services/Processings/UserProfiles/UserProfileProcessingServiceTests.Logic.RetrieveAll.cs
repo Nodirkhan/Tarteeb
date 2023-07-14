@@ -3,6 +3,7 @@
 // Free to use to bring order in your workplace
 //=================================
 
+using System;
 using System.Linq;
 using FluentAssertions;
 using Force.DeepCloner;
@@ -20,7 +21,8 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
         {
             // given
             IQueryable<User> randomUsers = CreateRandomUsers();
-            IQueryable<UserProfile> randomUserProfiles = PopulateUserProfiles(randomUsers);
+            IQueryable<UserProfile> randomUserProfiles = 
+                randomUsers.Select(AsUserProfile).AsQueryable();
 
             IQueryable<User> returnedUsers = randomUsers;
             IQueryable<UserProfile> expectedUserProfiles = randomUserProfiles.DeepClone();
@@ -43,9 +45,12 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
 
-        private IQueryable<UserProfile> PopulateUserProfiles(IQueryable<User> users)
+        private Func<User, UserProfile> AsUserProfile =>
+            user => MapToUserProfile(user);
+
+        private UserProfile MapToUserProfile(User user)
         {
-            return users.Select(user => new UserProfile
+            return new UserProfile
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
@@ -58,7 +63,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
                 GitHubUsername = user.GitHubUsername,
                 TelegramUsername = user.TelegramUsername,
                 TeamId = user.TeamId
-            });
+            };
         }
     }
 }
