@@ -15,7 +15,7 @@ namespace Tarteeb.Api.Services.Processings.Users
     public partial class UserProcessingService
     {
         private delegate User ReturningUserFunction();
-        private delegate ValueTask<Guid> ReturningUserFunctionGuid();
+        private delegate ValueTask<Guid> ReturningUserIdFunction();
 
         private User TryCatch(ReturningUserFunction returningUserFunction)
         {
@@ -37,7 +37,7 @@ namespace Tarteeb.Api.Services.Processings.Users
             }
         }
 
-        private async ValueTask<Guid> TryCatch(ReturningUserFunctionGuid returningUserFunctionGuid)
+        private async ValueTask<Guid> TryCatch(ReturningUserIdFunction returningUserFunctionGuid)
         {
             try
             {
@@ -97,6 +97,7 @@ namespace Tarteeb.Api.Services.Processings.Users
 
             return userProcessingDependencyValidationException;
         }
+
         private Exception CreateAndLogServiceException(Xeption expception)
         {
             var userProcessingServiceException =

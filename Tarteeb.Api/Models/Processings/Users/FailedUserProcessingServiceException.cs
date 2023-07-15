@@ -11,7 +11,7 @@ namespace Tarteeb.Api.Models.Processings.Users
     public class FailedUserProcessingServiceException : Xeption
     {
         public FailedUserProcessingServiceException(Exception innerException)
-            : base (message: "Failed user processing error occurred, please contact support", innerException)
+            : base (message: "Failed user error occurred, please contact support", innerException)
         { }
     }
 }

@@ -10,7 +10,7 @@ namespace Tarteeb.Api.Models.Processings.Users
     public class UserProcessingDependencyValidationException : Xeption
     {
         public UserProcessingDependencyValidationException(Xeption innerException)
-            : base(message: "User processing dependency validation error occurred, fix the errors and try again", innerException)
+            : base(message: "User dependency validation error occurred, fix the errors and try again", innerException)
         { }
     }
 }

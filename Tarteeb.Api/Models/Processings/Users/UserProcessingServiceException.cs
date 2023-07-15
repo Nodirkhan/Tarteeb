@@ -10,7 +10,7 @@ namespace Tarteeb.Api.Models.Processings.Users
     public class UserProcessingServiceException : Xeption
     {
         public UserProcessingServiceException(Xeption innerException) 
-            : base (message: "User processing service error occured, contact support", innerException)
+            : base (message: "User service error occured, contact support", innerException)
         { }
     }
 }
