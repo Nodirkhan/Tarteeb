@@ -3,11 +3,11 @@
 // Free to use to bring order in your workplace
 //=================================
 
+using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using Moq;
-using System;
-using System.Threading.Tasks;
 using Tarteeb.Api.Models.Foundations.Users;
 using Xunit;
 
@@ -19,14 +19,14 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.Users
         public async Task ShouldVerifyUserByIdAsync()
         {
             // given
-            DateTimeOffset dateTimeOffset = GetRandomDate();
+            DateTimeOffset currentDate = GetRandomDate();
             Guid randomUserId = Guid.NewGuid();
             Guid inputUserId = randomUserId;
             User randomUser = CreateRandomUser();
             randomUser.Id = inputUserId;
             User returnedUser = randomUser;
             returnedUser.IsActive = true;
-            returnedUser.UpdatedDate = dateTimeOffset;
+            returnedUser.UpdatedDate = currentDate;
             User inputUser = returnedUser;
             User modifiedUser = inputUser.DeepClone();
             Guid expectedUserId = modifiedUser.Id;
@@ -36,7 +36,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.Users
                     .ReturnsAsync(returnedUser);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTime()).Returns(dateTimeOffset);
+                broker.GetCurrentDateTime()).Returns(currentDate);
 
             this.userServiceMock.Setup(service =>
                 service.ModifyUserAsync(inputUser))

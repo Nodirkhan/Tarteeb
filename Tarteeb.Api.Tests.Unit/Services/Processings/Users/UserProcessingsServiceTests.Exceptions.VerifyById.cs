@@ -3,10 +3,10 @@
 // Free to use to bring order in your workplace
 //=================================
 
-using FluentAssertions;
-using Moq;
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Moq;
 using Tarteeb.Api.Models.Processings.Users;
 using Xeptions;
 using Xunit;
@@ -41,15 +41,15 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.Users
             actualUserProcessingDependencyValidationException.Should().BeEquivalentTo(expectedUserProcessingDependencyValidationException);
             
             this.userServiceMock.Verify(service =>
-                service.RetrieveUserByIdAsync(inputUserId), Times.Once());
+                service.RetrieveUserByIdAsync(inputUserId), Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedUserProcessingDependencyValidationException))),Times.Once);
 
             this.userServiceMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Theory]
