@@ -67,6 +67,13 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
             {
                 throw CreateAndLogDependencyException(userProfileProcessingServiceException);
             }
+            catch (Exception serviceException)
+            {
+                var failedUserProfileProcessingServiceException =
+                    new FailedUserProfileProcessingServiceException(serviceException);
+
+                throw CreateAndLogServiceException(failedUserProfileProcessingServiceException);
+            }
         }
 
         private UserProfileProcessingValidationException CreateAndLogValidationException(Xeption exception)
