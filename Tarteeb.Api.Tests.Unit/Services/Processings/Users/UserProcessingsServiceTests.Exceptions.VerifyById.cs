@@ -51,5 +51,43 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.Users
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [MemberData(nameof(UserDependencyExceptions))]
+        public async Task ShouldThrowDependencyExceptionIfDependencyErrorOccurrsAndLogItAsync(
+            Xeption dependencyException)
+        {
+            // given
+            Guid randomUserId = Guid.NewGuid();
+            Guid inputUserId = randomUserId;
+
+            var expectedUserProcessingDependencyException =
+                new UserProcessingDependencyException(dependencyException.InnerException as Xeption);
+
+            this.userServiceMock.Setup(service =>
+                service.RetrieveUserByIdAsync(inputUserId))
+                    .ThrowsAsync(dependencyException);
+
+            // when
+            ValueTask<Guid> verifyUserByIdTask = this.userProcessingsService.VerifyUserByIdAsync(inputUserId);
+
+            UserProcessingDependencyException actualUserProcessingDependencyException =
+                await Assert.ThrowsAsync<UserProcessingDependencyException>(verifyUserByIdTask.AsTask);
+
+            // then
+            actualUserProcessingDependencyException.Should().BeEquivalentTo(expectedUserProcessingDependencyException);
+
+            this.userServiceMock.Verify(service =>
+                service.RetrieveUserByIdAsync(inputUserId), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedUserProcessingDependencyException))), Times.Once);
+
+            this.userServiceMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
     }
 }
