@@ -13,6 +13,7 @@ using Tarteeb.Api.Models.Foundations.Teams;
 using Tarteeb.Api.Models.Foundations.Users;
 using Tarteeb.Api.Models.Foundations.Users.Exceptions;
 using Tarteeb.Api.Models.Processings.UserProfiles;
+using Tarteeb.Api.Models.Processings.UserProfiles.Exceptions;
 using Tarteeb.Api.Services.Foundations.Users;
 using Tarteeb.Api.Services.Processings.UserProfiles;
 using Tynamix.ObjectFiller;
@@ -55,6 +56,16 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
             return new TheoryData<Xeption>
             {
                 new UserValidationException(someInnerException)
+            };
+        }
+
+        public static TheoryData<Xeption> UserProfileDependencyExceptions()
+        {
+            var someInnerException = new Xeption();
+
+            return new TheoryData<Xeption>
+            {
+                new UserProfileProcessingDependencyException(someInnerException),
             };
         }
 

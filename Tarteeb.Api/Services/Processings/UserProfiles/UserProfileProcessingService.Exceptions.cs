@@ -6,7 +6,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Tarteeb.Api.Models.Foundations.Scores;
 using Tarteeb.Api.Models.Foundations.Users.Exceptions;
 using Tarteeb.Api.Models.Processings.UserProfiles;
 using Tarteeb.Api.Models.Processings.UserProfiles.Exceptions;
@@ -59,6 +58,10 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
             try
             {
                 return returningFunction();
+            }
+            catch(UserProfileProcessingDependencyException userProfileProcessingDependencyException)
+            {
+                throw CreateAndLogDependencyException(userProfileProcessingDependencyException);
             }
             catch (Exception serviceException)
             {

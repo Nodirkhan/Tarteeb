@@ -18,7 +18,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
     public partial class UserProfileProcessingServiceTests
     {
         [Theory]
-        [MemberData(nameof(UserDependencyExceptions))]
+        [MemberData(nameof(UserProfileDependencyExceptions))]
         public void ShouldThrowDependencyExceptionOnRetrieveAllIfDependencyErrorOccursAndLogItAsync(
             Xeption dependencyException)
         {
