@@ -50,6 +50,17 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.Users
             };
         }
 
+        public static TheoryData<Xeption> UserDependencyValidationExceptions()
+        {
+            var someInnerException = new Xeption();
+
+            return new TheoryData<Xeption>()
+            {
+                new UserValidationException(someInnerException),
+                new UserDependencyValidationException(someInnerException)
+            };
+        }
+
         private static string GetRandomString() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
