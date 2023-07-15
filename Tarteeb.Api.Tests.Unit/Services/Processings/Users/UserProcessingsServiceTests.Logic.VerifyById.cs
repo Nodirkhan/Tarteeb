@@ -59,8 +59,8 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.Users
                 service.ModifyUserAsync(inputUser), Times.Once);
 
             this.userServiceMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

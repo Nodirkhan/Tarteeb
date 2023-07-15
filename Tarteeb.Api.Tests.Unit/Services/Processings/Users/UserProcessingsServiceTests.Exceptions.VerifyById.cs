@@ -85,8 +85,8 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.Users
                     expectedUserProcessingDependencyException))), Times.Once);
 
             this.userServiceMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -125,8 +125,8 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.Users
                     expectedUserProcessingServiceException))), Times.Once);
 
             this.userServiceMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
     }
