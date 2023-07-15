@@ -89,5 +89,45 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.Users
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
 
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnVerifyUserByIdIfExceptionErrorOccurrsAndLogItAsync()
+        {
+            // given
+            Guid randomUserId = Guid.NewGuid();
+            Guid inputUserId = randomUserId;
+            var serviceException = new Exception();
+
+            var failedUserProcessingServiceException =
+                new FailedUserProcessingServiceException(serviceException);
+
+            var expectedUserProcessingServiceException =
+                new UserProcessingServiceException(failedUserProcessingServiceException);
+
+            this.userServiceMock.Setup(service =>
+                service.RetrieveUserByIdAsync(inputUserId))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<Guid> verifyUserByIdTask = this.userProcessingsService.VerifyUserByIdAsync(inputUserId);
+
+            UserProcessingServiceException actualUserProcessingServiceException =
+                await Assert.ThrowsAsync<UserProcessingServiceException>(
+                    verifyUserByIdTask.AsTask);
+
+            // then
+            actualUserProcessingServiceException.Should().BeEquivalentTo(expectedUserProcessingServiceException);
+
+            this.userServiceMock.Verify(service =>
+               service.RetrieveUserByIdAsync(inputUserId), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedUserProcessingServiceException))), Times.Once);
+
+            this.userServiceMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
     }
 }
