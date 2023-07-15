@@ -59,6 +59,13 @@ namespace Tarteeb.Api.Services.Processings.Users
             {
                 throw CreateAndLogDependencyException(userServiceException);
             }
+            catch (Exception serviceException)
+            {
+                var failedUserProcessingServiceException =
+                    new FailedUserProcessingServiceException(serviceException);
+
+                throw CreateAndLogServiceException(failedUserProcessingServiceException);
+            }
         }
 
         private UserProcessingValidationException CreateAndLogValidationException(Xeption exception)
@@ -89,6 +96,15 @@ namespace Tarteeb.Api.Services.Processings.Users
             this.loggingBroker.LogError(userProcessingDependencyValidationException);
 
             return userProcessingDependencyValidationException;
+        }
+        private Exception CreateAndLogServiceException(Xeption expception)
+        {
+            var userProcessingServiceException =
+                new UserProcessingServiceException(expception);
+
+            this.loggingBroker.LogError(userProcessingServiceException);
+
+            return userProcessingServiceException;
         }
     }
 }
