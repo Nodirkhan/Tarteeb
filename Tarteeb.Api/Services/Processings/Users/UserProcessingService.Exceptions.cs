@@ -51,6 +51,14 @@ namespace Tarteeb.Api.Services.Processings.Users
             {
                 throw CreateAndLogDependencyValidationException(userDependencyValidationException);
             }
+            catch (UserDependencyException userDependencyException)
+            {
+                throw CreateAndLogDependencyException(userDependencyException);
+            }
+            catch (UserServiceException userServiceException)
+            {
+                throw CreateAndLogDependencyException(userServiceException);
+            }
         }
 
         private UserProcessingValidationException CreateAndLogValidationException(Xeption exception)
