@@ -39,7 +39,8 @@ namespace Tarteeb.Api.Services.Processings.Users
                     && retrievedUser.Password.Equals(password));
         });
 
-        public async ValueTask<Guid> VerifyUserByIdAsync(Guid userId)
+        public ValueTask<Guid> VerifyUserByIdAsync(Guid userId) =>
+        TryCatch(async () =>
         {
             User maybeUser = await this.userService.RetrieveUserByIdAsync(userId);
             maybeUser.IsVerified = true;
@@ -47,7 +48,8 @@ namespace Tarteeb.Api.Services.Processings.Users
             await this.userService.ModifyUserAsync(maybeUser);
 
             return maybeUser.Id;
-        }
+        });
+
 
         public async ValueTask<Guid> ActivateUserByIdAsync(Guid userId)
         {
