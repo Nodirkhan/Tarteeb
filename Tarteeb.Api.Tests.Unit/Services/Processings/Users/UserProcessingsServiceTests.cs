@@ -83,6 +83,9 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.Users
             return randomUsers.AsQueryable();
         }
 
+        private User CreateRandomUser() =>
+            CreateUserFiller().Create();
+
         private Filler<User> CreateUserFiller()
         {
             DateTimeOffset dates = GetRandomDate();
