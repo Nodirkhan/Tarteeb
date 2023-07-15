@@ -55,5 +55,46 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            IQueryable<User> someUsers = CreateRandomUsers();
+            IQueryable<UserProfile> someUserProfiles =
+                someUsers.Select(AsUserProfile).AsQueryable();
+            
+            var serviceException = new Exception();
+
+            var failedPostImpressionProcessingServiceException =
+                new FailedUserProfileProcessingServiceException(serviceException);
+
+            var expectedUserProfileProcessingServiceException =
+                new UserProfileProcessingServiceException(failedPostImpressionProcessingServiceException);
+
+            this.userServiceMock.Setup(service =>
+                service.RetrieveAllUsers()).Throws(serviceException);
+
+            //when
+            Action retrieveAllUserProfilesAction = () =>
+                this.userProfileProcessingService.RetrieveAllUserProfiles();
+
+            UserProfileProcessingServiceException actualUserProfilesActionProcessingDependencyException =
+                Assert.Throws<UserProfileProcessingServiceException>(retrieveAllUserProfilesAction);
+
+            //then
+            actualUserProfilesActionProcessingDependencyException.Should().BeEquivalentTo(
+                expectedUserProfileProcessingServiceException);
+
+            this.userServiceMock.Verify(service =>
+                service.RetrieveAllUsers(), Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedUserProfileProcessingServiceException))), Times.Once);
+
+            this.userServiceMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }

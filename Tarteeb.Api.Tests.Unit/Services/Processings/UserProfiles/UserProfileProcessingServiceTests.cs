@@ -66,6 +66,7 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
             return new TheoryData<Xeption>
             {
                 new UserProfileProcessingDependencyException(someInnerException),
+                new UserProfileProcessingServiceException(someInnerException)
             };
         }
 
