@@ -5,7 +5,7 @@
 
 using Xeptions;
 
-namespace Tarteeb.Api.Models.Processings.Users.Exeptions
+namespace Tarteeb.Api.Models.Processings.Users
 {
     public class UserProcessingDependencyValidationException : Xeption
     {

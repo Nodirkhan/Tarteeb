@@ -7,7 +7,7 @@ using FluentAssertions;
 using Moq;
 using System;
 using System.Threading.Tasks;
-using Tarteeb.Api.Models.Processings.Users.Exeptions;
+using Tarteeb.Api.Models.Processings.Users;
 using Xeptions;
 using Xunit;
 
