@@ -4,6 +4,7 @@
 //=================================
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Tarteeb.Api.Brokers.Loggings;
 using Tarteeb.Api.Models.Foundations.Emails;
@@ -26,18 +27,30 @@ namespace Tarteeb.Api.Services.Processings.UserProfiles
             this.loggingBroker = loggingBroker;
         }
 
+        public IQueryable<UserProfile> RetrieveAllUserProfiles() =>
+        TryCatch(() =>
+        {
+            IQueryable<User> users =
+                this.userService.RetrieveAllUsers();
+
+            return users.Select(AsUserProfile).AsQueryable();
+        });
+
         public ValueTask<UserProfile> RetrieveUserProfileByIdAsync(Guid userProfileId) =>
         TryCatch(async () =>
         {
             ValidateUserProfileId(userProfileId);
             var maybeUser = await this.userService.RetrieveUserByIdAsync(userProfileId);
             ValidateStorageUser(userProfileId, maybeUser);
-            UserProfile populatedUserProfile = PopulateUserProfile(maybeUser);
+            UserProfile mappedUserProfile = MapToUserProfile(maybeUser);
 
-            return populatedUserProfile;
+            return mappedUserProfile;
         });
 
-        private UserProfile PopulateUserProfile(User user)
+        private static Func<User, UserProfile> AsUserProfile =>
+            user => MapToUserProfile(user);
+
+        private static UserProfile MapToUserProfile(User user)
         {
             return new UserProfile
             {

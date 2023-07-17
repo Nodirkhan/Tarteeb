@@ -1,0 +1,69 @@
+﻿//=================================
+// Copyright (c) Coalition of Good-Hearted Engineers
+// Free to use to bring order in your workplace
+//=================================
+
+using System;
+using System.Linq;
+using FluentAssertions;
+using Force.DeepCloner;
+using Moq;
+using Tarteeb.Api.Models.Foundations.Users;
+using Tarteeb.Api.Models.Processings.UserProfiles;
+using Xunit;
+
+namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
+{
+    public partial class UserProfileProcessingServiceTests
+    {
+        [Fact]
+        public void ShouldRetrieveAllUserProfiles()
+        {
+            // given
+            IQueryable<User> randomUsers = CreateRandomUsers();
+            IQueryable<UserProfile> randomUserProfiles = 
+                randomUsers.Select(AsUserProfile).AsQueryable();
+
+            IQueryable<User> returnedUsers = randomUsers;
+            IQueryable<UserProfile> expectedUserProfiles = randomUserProfiles.DeepClone();
+
+            this.userServiceMock.Setup(service =>
+                service.RetrieveAllUsers())
+                .Returns(returnedUsers);
+
+            // when
+            IQueryable<UserProfile> actualUserProfiles =
+                this.userProfileProcessingService.RetrieveAllUserProfiles();
+
+            // then 
+            actualUserProfiles.Should().BeEquivalentTo(expectedUserProfiles);
+
+            this.userServiceMock.Verify(service => 
+                service.RetrieveAllUsers(), Times.Once);
+
+            this.userServiceMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        private Func<User, UserProfile> AsUserProfile =>
+            user => MapToUserProfile(user);
+
+        private UserProfile MapToUserProfile(User user)
+        {
+            return new UserProfile
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                Email = user.Email,
+                BirthDate = user.BirthDate,
+                IsActive = user.IsActive,
+                IsVerified = user.IsVerified,
+                GitHubUsername = user.GitHubUsername,
+                TelegramUsername = user.TelegramUsername,
+                TeamId = user.TeamId
+            };
+        }
+    }
+}
