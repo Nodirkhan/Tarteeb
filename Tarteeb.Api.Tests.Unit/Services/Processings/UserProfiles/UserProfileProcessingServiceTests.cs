@@ -5,6 +5,7 @@
 
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Tarteeb.Api.Brokers.Loggings;
@@ -68,6 +69,48 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
                 new UserProfileProcessingDependencyException(someInnerException),
                 new UserProfileProcessingServiceException(someInnerException)
             };
+        }
+
+        private IQueryable<User> MapToUser(dynamic[] userProperties)
+        {
+            return userProperties.Select(userProperty => new User
+            {
+                Id = userProperty.Id,
+                FirstName = userProperty.FirstName,
+                LastName = userProperty.LastName,
+                PhoneNumber = userProperty.PhoneNumber,
+                Email = userProperty.Email,
+                BirthDate = userProperty.BirthDate,
+                IsActive = userProperty.IsActive,
+                IsVerified = userProperty.IsVerified,
+                GitHubUsername = userProperty.GitHubUsername,
+                TelegramUsername = userProperty.TelegramUsername,
+                TeamId = userProperty.TeamId
+            }).AsQueryable();
+        }
+
+        private IQueryable<UserProfile> MapToUsersProfile(dynamic[] userProperties)
+        {
+            return userProperties.Select(userProperty => new UserProfile
+            {
+                Id = userProperty.Id,
+                FirstName = userProperty.FirstName,
+                LastName = userProperty.LastName,
+                PhoneNumber = userProperty.PhoneNumber,
+                Email = userProperty.Email,
+                BirthDate = userProperty.BirthDate,
+                IsActive = userProperty.IsActive,
+                IsVerified = userProperty.IsVerified,
+                GitHubUsername = userProperty.GitHubUsername,
+                TelegramUsername = userProperty.TelegramUsername,
+                TeamId = userProperty.TeamId,
+            }).AsQueryable();
+        }
+
+        private static dynamic[] CreateRandomUsersProfileProperties()
+        {
+            return Enumerable.Range(0, GetRandomNumber()).Select(
+                item => CreateRandomUserProfileProperties()).ToArray();
         }
 
         private static dynamic CreateRandomUserProfileProperties()

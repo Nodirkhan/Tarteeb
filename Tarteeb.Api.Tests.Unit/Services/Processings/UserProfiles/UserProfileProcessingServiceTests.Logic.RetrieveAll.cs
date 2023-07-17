@@ -3,10 +3,8 @@
 // Free to use to bring order in your workplace
 //=================================
 
-using System;
 using System.Linq;
 using FluentAssertions;
-using Force.DeepCloner;
 using Moq;
 using Tarteeb.Api.Models.Foundations.Users;
 using Tarteeb.Api.Models.Processings.UserProfiles;
@@ -20,50 +18,30 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
         public void ShouldRetrieveAllUserProfiles()
         {
             // given
-            IQueryable<User> randomUsers = CreateRandomUsers();
-            IQueryable<UserProfile> randomUserProfiles = 
-                randomUsers.Select(AsUserProfile).AsQueryable();
+            dynamic[] randomUsersProperties = CreateRandomUsersProfileProperties();
 
-            IQueryable<User> returnedUsers = randomUsers;
-            IQueryable<UserProfile> expectedUserProfiles = randomUserProfiles.DeepClone();
+            IQueryable<User> mappedUsers = MapToUser(randomUsersProperties);
+            IQueryable<User> returnedUsers = mappedUsers;
+
+            IQueryable<UserProfile> mappedUsersProfile = MapToUsersProfile(randomUsersProperties);
+            IQueryable<UserProfile> expectedUsersProfiles = mappedUsersProfile;
 
             this.userServiceMock.Setup(service =>
                 service.RetrieveAllUsers())
-                .Returns(returnedUsers);
+                    .Returns(returnedUsers);
 
             // when
             IQueryable<UserProfile> actualUserProfiles =
                 this.userProfileProcessingService.RetrieveAllUserProfiles();
 
             // then 
-            actualUserProfiles.Should().BeEquivalentTo(expectedUserProfiles);
+            actualUserProfiles.Should().BeEquivalentTo(expectedUsersProfiles);
 
-            this.userServiceMock.Verify(service => 
+            this.userServiceMock.Verify(service =>
                 service.RetrieveAllUsers(), Times.Once);
 
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-        }
-
-        private Func<User, UserProfile> AsUserProfile =>
-            user => MapToUserProfile(user);
-
-        private UserProfile MapToUserProfile(User user)
-        {
-            return new UserProfile
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                PhoneNumber = user.PhoneNumber,
-                Email = user.Email,
-                BirthDate = user.BirthDate,
-                IsActive = user.IsActive,
-                IsVerified = user.IsVerified,
-                GitHubUsername = user.GitHubUsername,
-                TelegramUsername = user.TelegramUsername,
-                TeamId = user.TeamId
-            };
         }
     }
 }

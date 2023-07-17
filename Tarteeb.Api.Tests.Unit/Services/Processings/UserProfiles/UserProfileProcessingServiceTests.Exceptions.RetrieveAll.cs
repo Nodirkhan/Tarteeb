@@ -4,11 +4,8 @@
 //=================================
 
 using System;
-using System.Linq;
 using FluentAssertions;
 using Moq;
-using Tarteeb.Api.Models.Foundations.Users;
-using Tarteeb.Api.Models.Processings.UserProfiles;
 using Tarteeb.Api.Models.Processings.UserProfiles.Exceptions;
 using Xeptions;
 using Xunit;
@@ -23,10 +20,6 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
             Xeption dependencyException)
         {
             // given
-            IQueryable<User> someUsers = CreateRandomUsers();
-            IQueryable<UserProfile> someUserProfiles =
-                someUsers.Select(AsUserProfile).AsQueryable();
-
             var expectedUserProfileProcessingDependencyException =
                 new UserProfileProcessingDependencyException(
                     dependencyException.InnerException as Xeption);
@@ -60,10 +53,6 @@ namespace Tarteeb.Api.Tests.Unit.Services.Processings.UserProfiles
         public void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
         {
             // given
-            IQueryable<User> someUsers = CreateRandomUsers();
-            IQueryable<UserProfile> someUserProfiles =
-                someUsers.Select(AsUserProfile).AsQueryable();
-            
             var serviceException = new Exception();
 
             var failedPostImpressionProcessingServiceException =
